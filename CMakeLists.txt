@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 
 set(hdfs_SOURCES "env_hdfs.cc" "env_hdfs_impl.cc" PARENT_SCOPE)
-set(hdfs_COMPILE_FLAGS "-I$ENV{JAVA_HOME}/include -I$ENV{JAVA_HOME}/include/linux -I$ENV{HADOOP_HOME}/include" PARENT_SCOPE)
 set(hdfs_LIBS "hdfs" "dl" "verify" "java" "jvm" PARENT_SCOPE)
+set(hdfs_INCLUDE_PATHS "$ENV{JAVA_HOME}/include" "$ENV{JAVA_HOME}/include/linux" "$ENV{HADOOP_HOME}/include" PARENT_SCOPE)
 set(hdfs_LINK_PATHS "$ENV{JAVA_HOME}/jre/lib/amd64/server" "$ENV{JAVA_HOME}/jre/lib/amd64" "$ENV{HADOOP_HOME}/lib/native" PARENT_SCOPE)
 set(hdfs_CMAKE_EXE_LINKER_FLAGS "-u hdfs_reg" PARENT_SCOPE)
