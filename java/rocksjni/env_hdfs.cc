@@ -37,7 +37,7 @@ jlong Java_org_rocksdb_HdfsEnv_createHdfsEnv(
     if (!hdfs_env)
     {
         // error occurred
-        ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, s);
+        ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, "Unable to create HDFS environment");
         return 0;
     }
     auto ptr_as_handle = hdfs_env.release();
