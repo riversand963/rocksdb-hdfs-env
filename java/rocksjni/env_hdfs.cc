@@ -17,13 +17,6 @@
 #include "include/org_rocksdb_RocksMemEnv.h"
 #include "include/org_rocksdb_TimedEnv.h"
 
-namespace ROCKSDB_NAMESPACE
-{
-    // Returns a new environment that is used for HDFS environment.
-    // This is a factory method for HdfsEnv declared in hdfs/env_hdfs.h
-    Status NewHdfsEnv(Env **hdfs_env, const std::string &fsname);
-}
-
 /*
  * Class:     org_rocksdb_HdfsEnv
  * Method:    createHdfsEnv
@@ -40,16 +33,15 @@ jlong Java_org_rocksdb_HdfsEnv_createHdfsEnv(
         // exception occurred
         return 0;
     }
-    ROCKSDB_NAMESPACE::Env *hdfs_env;
-    ROCKSDB_NAMESPACE::Status s =
-        ROCKSDB_NAMESPACE::NewHdfsEnv(&hdfs_env, fsname);
-    if (!s.ok())
+    std::unique_ptr<ROCKSDB_NAMESPACE::Env> hdfs_env = ROCKSDB_NAMESPACE::NewHdfsEnv(&hdfs_env, fsname);
+    if (!hdfs_env)
     {
         // error occurred
         ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, s);
         return 0;
     }
-    return reinterpret_cast<jlong>(hdfs_env);
+    auto ptr_as_handle = hdfs_env.release();
+    return reinterpret_cast<jlong>(ptr_as_handle);
 }
 
     /*
