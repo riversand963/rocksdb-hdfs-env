@@ -33,7 +33,7 @@ jlong Java_org_rocksdb_HdfsEnv_createHdfsEnv(
         // exception occurred
         return 0;
     }
-    std::unique_ptr<ROCKSDB_NAMESPACE::Env> hdfs_env = ROCKSDB_NAMESPACE::NewHdfsEnv(&hdfs_env, fsname);
+    std::unique_ptr<ROCKSDB_NAMESPACE::Env> hdfs_env = ROCKSDB_NAMESPACE::NewHdfsEnv(fsname);
     if (!hdfs_env)
     {
         // error occurred
