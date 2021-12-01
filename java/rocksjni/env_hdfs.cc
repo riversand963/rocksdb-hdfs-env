@@ -45,15 +45,15 @@ jlong Java_org_rocksdb_HdfsEnv_createHdfsEnv(
     return reinterpret_cast<jlong>(ptr_as_handle);
 }
 
-    /*
-     * Class:     org_rocksdb_HdfsEnv
-     * Method:    disposeInternal
-     * Signature: (J)V
-     */
-    void Java_org_rocksdb_HdfsEnv_disposeInternal(
-        JNIEnv *, jobject, jlong jhandle)
-    {
-        auto *e = reinterpret_cast<ROCKSDB_NAMESPACE::Env *>(jhandle);
-        assert(e != nullptr);
-        delete e;
-    }
+/*
+    * Class:     org_rocksdb_HdfsEnv
+    * Method:    disposeInternal
+    * Signature: (J)V
+    */
+void Java_org_rocksdb_HdfsEnv_disposeInternal(
+    JNIEnv *, jobject, jlong jhandle)
+{
+    auto *e = reinterpret_cast<ROCKSDB_NAMESPACE::Env *>(jhandle);
+    assert(e != nullptr);
+    delete e;
+}

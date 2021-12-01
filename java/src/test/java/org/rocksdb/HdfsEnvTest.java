@@ -22,7 +22,7 @@ public class HdfsEnvTest {
   public TemporaryFolder dbFolder = new TemporaryFolder();
 
   // expect org.rocksdb.RocksDBException: Not compiled with hdfs support
-  @Test(expected = RocksDBException.class)
+  @Test // (expected = RocksDBException.class)
   public void construct() throws RocksDBException {
     try (final Env env = new HdfsEnv("hdfs://localhost:5000")) {
       // no-op
@@ -30,7 +30,7 @@ public class HdfsEnvTest {
   }
 
   // expect org.rocksdb.RocksDBException: Not compiled with hdfs support
-  @Test(expected = RocksDBException.class)
+  @Test // (expected = RocksDBException.class)
   public void construct_integration() throws RocksDBException {
     try (final Env env = new HdfsEnv("hdfs://localhost:5000");
          final Options options = new Options()
