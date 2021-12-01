@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "portal.h"
+#include "env_hdfs.h"
 #include "rocksdb/env.h"
 #include "include/org_rocksdb_Env.h"
 #include "include/org_rocksdb_HdfsEnv.h"
