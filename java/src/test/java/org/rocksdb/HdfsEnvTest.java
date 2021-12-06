@@ -18,19 +18,27 @@ public class HdfsEnvTest {
   public static final RocksNativeLibraryResource ROCKS_NATIVE_LIBRARY_RESOURCE =
       new RocksNativeLibraryResource();
 
-  @Rule
-  public TemporaryFolder dbFolder = new TemporaryFolder();
+  // @Rule
+  // public TemporaryFolder dbFolder = new TemporaryFolder();
 
-  // expect org.rocksdb.RocksDBException: Not compiled with hdfs support
-  @Test // (expected = RocksDBException.class)
+  /**
+   * Connect to a running hdfs
+   * 
+   * @throws RocksDBException
+   */
+  @Test
   public void construct() throws RocksDBException {
     try (final Env env = new HdfsEnv("hdfs://localhost:5000")) {
       // no-op
     }
   }
 
-  // expect org.rocksdb.RocksDBException: Not compiled with hdfs support
-  @Test // (expected = RocksDBException.class)
+  /**
+   * Connect to a running hdfs and do a simple put
+   * 
+   * @throws RocksDBException
+   */
+  // @Test
   public void construct_integration() throws RocksDBException {
     try (final Env env = new HdfsEnv("hdfs://localhost:5000");
          final Options options = new Options()
