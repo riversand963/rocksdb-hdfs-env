@@ -38,7 +38,7 @@ public class HdfsEnvTest {
    * 
    * @throws RocksDBException
    */
-  // @Test
+  @Test
   public void construct_integration() throws RocksDBException {
     try (final Env env = new HdfsEnv("hdfs://localhost:5000");
          final Options options = new Options()
