@@ -18,8 +18,8 @@ public class HdfsEnvTest {
   public static final RocksNativeLibraryResource ROCKS_NATIVE_LIBRARY_RESOURCE =
       new RocksNativeLibraryResource();
 
-  // @Rule
-  // public TemporaryFolder dbFolder = new TemporaryFolder();
+  @Rule
+  public TemporaryFolder dbFolder = new TemporaryFolder();
 
   /**
    * Connect to a running hdfs
