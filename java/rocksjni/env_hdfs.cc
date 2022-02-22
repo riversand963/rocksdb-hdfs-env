@@ -34,12 +34,13 @@ jlong Java_org_rocksdb_HdfsEnv_createHdfsEnv(
         // exception occurred
         return 0;
     }
-    std::unique_ptr<ROCKSDB_NAMESPACE::Env> hdfs_env = ROCKSDB_NAMESPACE::NewHdfsEnv(fsname);
-    if (!hdfs_env)
+    std::unique_ptr<ROCKSDB_NAMESPACE::Env> hdfs_env;
+    auto status = ROCKSDB_NAMESPACE::NewHdfsEnv(fsname, &hdfs_env);
+    if (!status.ok())
     {
         // error occurred
-        ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, "Unable to create HDFS environment");
-        return 0;
+      ROCKSDB_NAMESPACE::RocksDBExceptionJni::ThrowNew(env, status);
+      return 0;
     }
     auto ptr_as_handle = hdfs_env.release();
     return reinterpret_cast<jlong>(ptr_as_handle);

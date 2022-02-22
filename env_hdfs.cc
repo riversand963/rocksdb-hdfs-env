@@ -5,31 +5,70 @@
 
 #include "env_hdfs.h"
 
-#include <rocksdb/utilities/object_registry.h>
+#include "rocksdb/env.h"
+#include "rocksdb/file_system.h"
+#include "rocksdb/status.h"
+#include "rocksdb/utilities/object_registry.h"
 
-#include "env_hdfs_impl.h"
 
 namespace ROCKSDB_NAMESPACE {
 
 #ifndef ROCKSDB_LITE
-
-extern "C" FactoryFunc<Env> hdfs_reg;
-
-FactoryFunc<Env> hdfs_reg =
-    ObjectLibrary::Default()->Register<Env>(
-        "hdfs://.*",
-        [](const std::string& fsname, std::unique_ptr<Env>* env,
-           std::string* /* errmsg */) {
-          *env = NewHdfsEnv(fsname);
-          return env->get();
-        });
-
-#endif  // ROCKSDB_LITE
+int register_HdfsObjects(ObjectLibrary& library, const std::string&) {
+  // HDFS FileSystem and Env objects can be registered as either:
+  // hdfs://
+  // hdfs://server:port
+  // hdfs://server:port/dir
+  
+  library.AddFactory<FileSystem>(ObjectLibrary::PatternEntry(HdfsFileSystem::kNickName(), false)
+                                 .AddSeparator("://", false),
+      [](const std::string& uri, std::unique_ptr<FileSystem>* guard,
+         std::string* errmsg) {
+        Status s = HdfsFileSystem::Create(FileSystem::Default(), uri, guard);
+        if (!s.ok()) {
+          *errmsg = "Failed to connect to default server";
+        }
+        return guard->get();
+      });
+  library.AddFactory<Env>(ObjectLibrary::PatternEntry(HdfsFileSystem::kNickName(), false)
+                          .AddSeparator("://", false),
+      [](const std::string& uri, std::unique_ptr<Env>* guard,
+         std::string* errmsg) {
+        Status s = NewHdfsEnv(uri, guard);
+        if (!s.ok()) {
+          *errmsg = "Failed to connect to default server";
+        }
+        return guard->get();
+      });
+  size_t num_types;
+  return static_cast<int>(library.GetFactoryCount(&num_types));
+  
+}
+#endif // ROCKSDB_LITE
+void hdfs_reg() {
+#ifndef ROCKSDB_LITE
+  auto lib = ObjectRegistry::Default()->AddLibrary("hdfs");
+  register_HdfsObjects(*lib, "hdfs");
+#endif // ROCKSDB_LITE
+}
 
 // The factory method for creating an HDFS Env
-std::unique_ptr<Env>
-NewHdfsEnv(const std::string& fsname) {
-  return std::unique_ptr<Env>(new HdfsEnv(fsname));
+Status NewHdfsFileSystem(const std::string& uri, std::shared_ptr<FileSystem>* fs) {
+  std::unique_ptr<FileSystem> hdfs;
+  Status s = HdfsFileSystem::Create(FileSystem::Default(), uri, &hdfs);
+  if (s.ok()) {
+    fs->reset(hdfs.release());
+  }
+  return s;
+}
+
+Status NewHdfsEnv(const std::string& uri, std::unique_ptr<Env>* hdfs) {
+  std::shared_ptr<FileSystem> fs;
+  Status s = NewHdfsFileSystem(uri, &fs);
+  if (s.ok()) {
+    *hdfs =  NewCompositeEnv(fs);
+  }
+  return s;
 }
 
 
